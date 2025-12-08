@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { textLength, isValidUrl } from '../utils/validators'
 
 export const Hero: Block = {
   slug: 'hero',
@@ -6,22 +7,40 @@ export const Hero: Block = {
     singular: 'Hero Section',
     plural: 'Hero Sections',
   },
-  imageURL: '/api/media/file/hero-block-preview.png',
   fields: [
     {
-      name: 'heading',
+      name: 'eyebrow',
+      type: 'text',
+      admin: {
+        description: 'Small text above headline (10-40 chars). e.g., "Discovery-First Product Management"',
+      },
+      validate: textLength(10, 40),
+    },
+    {
+      name: 'headline',
       type: 'text',
       required: true,
       admin: {
-        description: 'The main headline for this section',
+        description: 'Main headline (20-60 chars). One sentence. Action-oriented. No jargon.',
       },
+      validate: textLength(20, 60),
     },
     {
-      name: 'subheading',
-      type: 'textarea',
+      name: 'headlineEmphasis',
+      type: 'text',
       admin: {
-        description: 'Supporting text that appears below the heading',
+        description: 'Word to highlight in brand color (3-20 chars). Must appear in headline.',
       },
+      validate: textLength(3, 20),
+    },
+    {
+      name: 'subheadline',
+      type: 'textarea',
+      required: true,
+      admin: {
+        description: 'Supporting text (40-160 chars). Expands on headline. Plain English value prop.',
+      },
+      validate: textLength(40, 160),
     },
     {
       name: 'backgroundImage',
@@ -32,38 +51,60 @@ export const Hero: Block = {
       },
     },
     {
-      name: 'ctaButtons',
-      type: 'array',
-      label: 'Call to Action Buttons',
-      maxRows: 2,
-      admin: {
-        description: 'Add up to 2 CTA buttons',
-      },
+      type: 'row',
       fields: [
         {
-          name: 'label',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'link',
+          name: 'primaryCtaText',
           type: 'text',
           required: true,
           admin: {
-            description: 'URL or path (e.g., /contact or https://example.com)',
+            description: 'Primary button text (10-25 chars). e.g., "Start Free Trial"',
+            width: '50%',
           },
+          validate: textLength(10, 25),
         },
         {
-          name: 'variant',
-          type: 'select',
-          defaultValue: 'primary',
-          options: [
-            { label: 'Primary', value: 'primary' },
-            { label: 'Secondary', value: 'secondary' },
-            { label: 'Outline', value: 'outline' },
-          ],
+          name: 'primaryCtaUrl',
+          type: 'text',
+          required: true,
+          admin: {
+            description: 'Primary button URL',
+            width: '50%',
+          },
+          validate: isValidUrl,
         },
       ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'secondaryCtaText',
+          type: 'text',
+          admin: {
+            description: 'Secondary button text (10-25 chars). e.g., "See How It Works"',
+            width: '50%',
+          },
+          validate: textLength(10, 25),
+        },
+        {
+          name: 'secondaryCtaUrl',
+          type: 'text',
+          admin: {
+            description: 'Secondary button URL',
+            width: '50%',
+          },
+          validate: isValidUrl,
+        },
+      ],
+    },
+    {
+      name: 'trustNote',
+      type: 'text',
+      admin: {
+        description: 'Trust signal below CTAs (10-40 chars). e.g., "No credit card required"',
+      },
+      validate: textLength(10, 40),
     },
     {
       name: 'alignment',

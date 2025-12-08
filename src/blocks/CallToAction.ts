@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { textLength, isValidUrl } from '../utils/validators'
 
 export const CallToAction: Block = {
   slug: 'cta',
@@ -8,86 +9,127 @@ export const CallToAction: Block = {
   },
   fields: [
     {
-      name: 'style',
+      name: 'variant',
       type: 'select',
-      defaultValue: 'banner',
+      defaultValue: 'standard',
       options: [
-        { label: 'Full-width Banner', value: 'banner' },
-        { label: 'Card', value: 'card' },
-        { label: 'Minimal', value: 'minimal' },
+        { label: 'Standard', value: 'standard' },
+        { label: 'Final (Ember/Brand)', value: 'final' },
+        { label: 'Mid-Page (Compact)', value: 'mid' },
       ],
       admin: {
-        description: 'Visual style of the CTA section',
+        description: 'Visual style. Use "Final" for page-ending CTAs, "Mid-Page" for inline CTAs.',
       },
     },
     {
-      name: 'heading',
+      name: 'showLogoMark',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Display large logo mark above headline (recommended for Final variant)',
+        condition: (data, siblingData) => siblingData?.variant === 'final',
+      },
+    },
+    {
+      name: 'headline',
       type: 'text',
       required: true,
       admin: {
-        description: 'Main CTA headline (e.g., "Ready to get started?")',
+        description: 'CTA headline (15-60 chars). e.g., "Build Products Customers Actually Want"',
       },
+      validate: textLength(15, 60),
     },
     {
-      name: 'description',
+      name: 'subheadline',
       type: 'textarea',
       admin: {
-        description: 'Supporting text for the CTA',
+        description: 'Supporting text (30-100 chars). e.g., "Start with evidence. Ship with confidence."',
       },
+      validate: textLength(30, 100),
     },
     {
-      name: 'buttons',
-      type: 'array',
-      required: true,
-      minRows: 1,
-      maxRows: 2,
+      type: 'row',
       fields: [
         {
-          name: 'label',
+          name: 'primaryCtaText',
           type: 'text',
           required: true,
           admin: {
-            description: 'Button text (e.g., "Start Free Trial")',
+            description: 'Primary button (10-25 chars). e.g., "Start Free Trial"',
+            width: '50%',
           },
+          validate: textLength(10, 25),
         },
         {
-          name: 'link',
+          name: 'primaryCtaUrl',
           type: 'text',
           required: true,
           admin: {
-            description: 'URL or path for the button',
+            description: 'Primary button URL',
+            width: '50%',
           },
+          validate: isValidUrl,
         },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
         {
-          name: 'variant',
-          type: 'select',
-          defaultValue: 'primary',
-          options: [
-            { label: 'Primary', value: 'primary' },
-            { label: 'Secondary', value: 'secondary' },
-            { label: 'Outline', value: 'outline' },
-          ],
-        },
-        {
-          name: 'openInNewTab',
-          type: 'checkbox',
-          defaultValue: false,
+          name: 'secondaryCtaText',
+          type: 'text',
           admin: {
-            description: 'Open link in a new browser tab',
+            description: 'Secondary button (10-25 chars). e.g., "Book a Demo"',
+            width: '50%',
           },
+          validate: textLength(10, 25),
+        },
+        {
+          name: 'secondaryCtaUrl',
+          type: 'text',
+          admin: {
+            description: 'Secondary button URL',
+            width: '50%',
+          },
+          validate: isValidUrl,
+        },
+      ],
+    },
+    {
+      name: 'trustSignals',
+      type: 'array',
+      label: 'Trust Signals',
+      minRows: 0,
+      maxRows: 5,
+      admin: {
+        description: 'Friction reducers below buttons (3-5 recommended). e.g., "No credit card required"',
+      },
+      fields: [
+        {
+          name: 'text',
+          type: 'text',
+          required: true,
+          admin: {
+            description: '10-40 characters',
+          },
+          validate: textLength(10, 40),
         },
       ],
     },
     {
       name: 'backgroundColor',
       type: 'select',
-      defaultValue: 'brand-primary',
+      defaultValue: 'default',
       options: [
-        { label: 'Brand Primary', value: 'brand-primary' },
+        { label: 'Default (Page)', value: 'default' },
+        { label: 'Brand Primary (Ember)', value: 'brand-primary' },
         { label: 'Brand Secondary', value: 'brand-secondary' },
         { label: 'Dark', value: 'dark' },
         { label: 'Light', value: 'light' },
       ],
+      admin: {
+        description: 'Background color. Use "Brand Primary" for final CTAs.',
+      },
     },
   ],
 }

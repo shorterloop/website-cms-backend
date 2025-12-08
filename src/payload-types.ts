@@ -167,7 +167,7 @@ export interface Media {
 export interface Page {
   id: number;
   /**
-   * The page title - displayed in browser tab and as the main heading
+   * Page title (20-100 chars) - displayed in browser tab and as the main heading
    */
   title: string;
   /**
@@ -180,31 +180,45 @@ export interface Page {
   layout: (
     | {
         /**
-         * The main headline for this section
+         * Small text above headline (10-40 chars). e.g., "Discovery-First Product Management"
          */
-        heading: string;
+        eyebrow?: string | null;
         /**
-         * Supporting text that appears below the heading
+         * Main headline (20-60 chars). One sentence. Action-oriented. No jargon.
          */
-        subheading?: string | null;
+        headline: string;
+        /**
+         * Word to highlight in brand color (3-20 chars). Must appear in headline.
+         */
+        headlineEmphasis?: string | null;
+        /**
+         * Supporting text (40-160 chars). Expands on headline. Plain English value prop.
+         */
+        subheadline: string;
         /**
          * Optional background image for the hero section
          */
         backgroundImage?: (number | null) | Media;
         /**
-         * Add up to 2 CTA buttons
+         * Primary button text (10-25 chars). e.g., "Start Free Trial"
          */
-        ctaButtons?:
-          | {
-              label: string;
-              /**
-               * URL or path (e.g., /contact or https://example.com)
-               */
-              link: string;
-              variant?: ('primary' | 'secondary' | 'outline') | null;
-              id?: string | null;
-            }[]
-          | null;
+        primaryCtaText: string;
+        /**
+         * Primary button URL
+         */
+        primaryCtaUrl: string;
+        /**
+         * Secondary button text (10-25 chars). e.g., "See How It Works"
+         */
+        secondaryCtaText?: string | null;
+        /**
+         * Secondary button URL
+         */
+        secondaryCtaUrl?: string | null;
+        /**
+         * Trust signal below CTAs (10-40 chars). e.g., "No credit card required"
+         */
+        trustNote?: string | null;
         /**
          * Text alignment for the hero content
          */
@@ -212,6 +226,289 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'hero';
+      }
+    | {
+        /**
+         * Small text above heading (5-30 chars). e.g., "Our Approach"
+         */
+        eyebrow?: string | null;
+        /**
+         * Section heading (15-80 chars)
+         */
+        heading?: string | null;
+        /**
+         * Text below heading (30-160 chars)
+         */
+        subheading?: string | null;
+        /**
+         * Main content area - supports rich text formatting, links, and embedded media
+         */
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * Optional image or media to accompany the content
+         */
+        media?: (number | null) | Media;
+        /**
+         * Accessibility description for the media (20-100 chars)
+         */
+        mediaAlt?: string | null;
+        /**
+         * Where the media appears relative to the text
+         */
+        mediaPosition?: ('above' | 'below' | 'left' | 'right') | null;
+        /**
+         * Content width setting
+         */
+        layout?: ('contained' | 'full' | 'narrow') | null;
+        /**
+         * Section background color
+         */
+        backgroundColor?: ('default' | 'light-gray' | 'dark' | 'brand-light') | null;
+        /**
+         * Text alignment (heading and content)
+         */
+        textAlign?: ('left' | 'center') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'richContent';
+      }
+    | {
+        /**
+         * Visual style. Use "Final" for page-ending CTAs, "Mid-Page" for inline CTAs.
+         */
+        variant?: ('standard' | 'final' | 'mid') | null;
+        /**
+         * Display large logo mark above headline (recommended for Final variant)
+         */
+        showLogoMark?: boolean | null;
+        /**
+         * CTA headline (15-60 chars). e.g., "Build Products Customers Actually Want"
+         */
+        headline: string;
+        /**
+         * Supporting text (30-100 chars). e.g., "Start with evidence. Ship with confidence."
+         */
+        subheadline?: string | null;
+        /**
+         * Primary button (10-25 chars). e.g., "Start Free Trial"
+         */
+        primaryCtaText: string;
+        /**
+         * Primary button URL
+         */
+        primaryCtaUrl: string;
+        /**
+         * Secondary button (10-25 chars). e.g., "Book a Demo"
+         */
+        secondaryCtaText?: string | null;
+        /**
+         * Secondary button URL
+         */
+        secondaryCtaUrl?: string | null;
+        /**
+         * Friction reducers below buttons (3-5 recommended). e.g., "No credit card required"
+         */
+        trustSignals?:
+          | {
+              /**
+               * 10-40 characters
+               */
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Background color. Use "Brand Primary" for final CTAs.
+         */
+        backgroundColor?: ('default' | 'brand-primary' | 'brand-secondary' | 'dark' | 'light') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'cta';
+      }
+    | {
+        /**
+         * Type of social proof to display
+         */
+        variant?: ('quotes' | 'metrics' | 'logos') | null;
+        /**
+         * Section headline (15-60 chars). e.g., "Teams Who've Made the Shift"
+         */
+        headline?: string | null;
+        /**
+         * Optional intro text (30-120 chars)
+         */
+        subheadline?: string | null;
+        /**
+         * Customer testimonials (1-4). Quality over quantity.
+         */
+        quotes?:
+          | {
+              /**
+               * The testimonial text (60-250 chars). Must include specific outcome.
+               */
+              quote: string;
+              /**
+               * Full name (5-50 chars)
+               */
+              authorName: string;
+              /**
+               * Role and company (10-60 chars). e.g., "VP Product at Acme Corp"
+               */
+              authorTitle: string;
+              /**
+               * Headshot photo (increases trust significantly)
+               */
+              authorImage?: (number | null) | Media;
+              /**
+               * Company logo (optional)
+               */
+              companyLogo?: (number | null) | Media;
+              /**
+               * Star rating 1-5 (optional)
+               */
+              rating?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Headline metrics (2-4)
+         */
+        metrics?:
+          | {
+              /**
+               * The metric value (1-15 chars). e.g., "40%", "3x", "12 weeks"
+               */
+              value: string;
+              /**
+               * What it measures (15-60 chars). e.g., "reduction in roadmap debates"
+               */
+              label: string;
+              /**
+               * Optional context (20-80 chars). e.g., "average across all customers"
+               */
+              context?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Company logos (3-12). Grayscale preferred.
+         */
+        logos?:
+          | {
+              /**
+               * Company logo
+               */
+              logo: number | Media;
+              /**
+               * Company name for accessibility (5-40 chars)
+               */
+              companyName: string;
+              /**
+               * Optional link to case study or website
+               */
+              url?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * How items are displayed
+         */
+        layout?: ('grid' | 'carousel' | 'stacked') | null;
+        /**
+         * Section background color
+         */
+        backgroundColor?: ('default' | 'light-gray' | 'dark') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'socialProof';
+      }
+    | {
+        /**
+         * Small text above heading (5-30 chars). e.g., "Why Choose Us"
+         */
+        eyebrow?: string | null;
+        /**
+         * Section heading (15-60 chars). e.g., "Everything You Need, Nothing You Don't"
+         */
+        heading?: string | null;
+        /**
+         * Intro text below heading (30-120 chars)
+         */
+        subheading?: string | null;
+        /**
+         * Number of features per row on desktop
+         */
+        columns?: ('2' | '3' | '4') | null;
+        /**
+         * Feature items (2-12)
+         */
+        features: {
+          /**
+           * Icon from approved set
+           */
+          icon?:
+            | (
+                | 'check'
+                | 'star'
+                | 'shield'
+                | 'lightning'
+                | 'chart'
+                | 'users'
+                | 'target'
+                | 'puzzle'
+                | 'layers'
+                | 'compass'
+                | 'inbox'
+                | 'signal'
+              )
+            | null;
+          /**
+           * Custom image instead of icon (optional)
+           */
+          image?: (number | null) | Media;
+          /**
+           * Feature title (10-50 chars)
+           */
+          title: string;
+          /**
+           * One-line value prop (15-60 chars). e.g., "Turn noise into signal"
+           */
+          tagline?: string | null;
+          /**
+           * Feature description (40-150 chars)
+           */
+          description: string;
+          /**
+           * Optional "Learn more" link URL
+           */
+          link?: string | null;
+          /**
+           * Link text (10-25 chars). e.g., "Explore →"
+           */
+          linkText?: string | null;
+          id?: string | null;
+        }[];
+        /**
+         * Section background color
+         */
+        backgroundColor?: ('default' | 'light-gray' | 'brand-light') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'features';
       }
     | {
         /**
@@ -252,86 +549,14 @@ export interface Page {
         blockName?: string | null;
         blockType: 'textContent';
       }
-    | {
-        /**
-         * Visual style of the CTA section
-         */
-        style?: ('banner' | 'card' | 'minimal') | null;
-        /**
-         * Main CTA headline (e.g., "Ready to get started?")
-         */
-        heading: string;
-        /**
-         * Supporting text for the CTA
-         */
-        description?: string | null;
-        buttons: {
-          /**
-           * Button text (e.g., "Start Free Trial")
-           */
-          label: string;
-          /**
-           * URL or path for the button
-           */
-          link: string;
-          variant?: ('primary' | 'secondary' | 'outline') | null;
-          /**
-           * Open link in a new browser tab
-           */
-          openInNewTab?: boolean | null;
-          id?: string | null;
-        }[];
-        backgroundColor?: ('brand-primary' | 'brand-secondary' | 'dark' | 'light') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'cta';
-      }
-    | {
-        /**
-         * Section heading (e.g., "Why choose us?")
-         */
-        heading?: string | null;
-        /**
-         * Optional intro text below the heading
-         */
-        subheading?: string | null;
-        /**
-         * Number of features per row on desktop
-         */
-        columns?: ('2' | '3' | '4') | null;
-        /**
-         * Add feature items to display in the grid
-         */
-        features: {
-          /**
-           * Icon name (e.g., "check", "star", "shield") - we'll map these to actual icons
-           */
-          icon?: string | null;
-          /**
-           * Or use a custom image instead of an icon
-           */
-          image?: (number | null) | Media;
-          title: string;
-          description: string;
-          /**
-           * Optional link for "Learn more"
-           */
-          link?: string | null;
-          id?: string | null;
-        }[];
-        backgroundColor?: ('white' | 'light-gray' | 'brand-light') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'features';
-      }
   )[];
   meta?: {
     /**
-     * SEO title - if empty, page title will be used. Recommended: 50-60 characters
+     * SEO title (50-60 chars) - if empty, page title will be used
      */
     title?: string | null;
     /**
-     * Meta description for search engines. Recommended: 150-160 characters
+     * Meta description for search engines (150-160 chars)
      */
     description?: string | null;
     /**
@@ -488,18 +713,115 @@ export interface PagesSelect<T extends boolean = true> {
         hero?:
           | T
           | {
+              eyebrow?: T;
+              headline?: T;
+              headlineEmphasis?: T;
+              subheadline?: T;
+              backgroundImage?: T;
+              primaryCtaText?: T;
+              primaryCtaUrl?: T;
+              secondaryCtaText?: T;
+              secondaryCtaUrl?: T;
+              trustNote?: T;
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richContent?:
+          | T
+          | {
+              eyebrow?: T;
               heading?: T;
               subheading?: T;
-              backgroundImage?: T;
-              ctaButtons?:
+              content?: T;
+              media?: T;
+              mediaAlt?: T;
+              mediaPosition?: T;
+              layout?: T;
+              backgroundColor?: T;
+              textAlign?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              variant?: T;
+              showLogoMark?: T;
+              headline?: T;
+              subheadline?: T;
+              primaryCtaText?: T;
+              primaryCtaUrl?: T;
+              secondaryCtaText?: T;
+              secondaryCtaUrl?: T;
+              trustSignals?:
                 | T
                 | {
-                    label?: T;
-                    link?: T;
-                    variant?: T;
+                    text?: T;
                     id?: T;
                   };
-              alignment?: T;
+              backgroundColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        socialProof?:
+          | T
+          | {
+              variant?: T;
+              headline?: T;
+              subheadline?: T;
+              quotes?:
+                | T
+                | {
+                    quote?: T;
+                    authorName?: T;
+                    authorTitle?: T;
+                    authorImage?: T;
+                    companyLogo?: T;
+                    rating?: T;
+                    id?: T;
+                  };
+              metrics?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    context?: T;
+                    id?: T;
+                  };
+              logos?:
+                | T
+                | {
+                    logo?: T;
+                    companyName?: T;
+                    url?: T;
+                    id?: T;
+                  };
+              layout?: T;
+              backgroundColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              eyebrow?: T;
+              heading?: T;
+              subheading?: T;
+              columns?: T;
+              features?:
+                | T
+                | {
+                    icon?: T;
+                    image?: T;
+                    title?: T;
+                    tagline?: T;
+                    description?: T;
+                    link?: T;
+                    linkText?: T;
+                    id?: T;
+                  };
+              backgroundColor?: T;
               id?: T;
               blockName?: T;
             };
@@ -510,45 +832,6 @@ export interface PagesSelect<T extends boolean = true> {
               content?: T;
               image?: T;
               imagePosition?: T;
-              backgroundColor?: T;
-              id?: T;
-              blockName?: T;
-            };
-        cta?:
-          | T
-          | {
-              style?: T;
-              heading?: T;
-              description?: T;
-              buttons?:
-                | T
-                | {
-                    label?: T;
-                    link?: T;
-                    variant?: T;
-                    openInNewTab?: T;
-                    id?: T;
-                  };
-              backgroundColor?: T;
-              id?: T;
-              blockName?: T;
-            };
-        features?:
-          | T
-          | {
-              heading?: T;
-              subheading?: T;
-              columns?: T;
-              features?:
-                | T
-                | {
-                    icon?: T;
-                    image?: T;
-                    title?: T;
-                    description?: T;
-                    link?: T;
-                    id?: T;
-                  };
               backgroundColor?: T;
               id?: T;
               blockName?: T;

@@ -1,5 +1,13 @@
 import type { CollectionConfig } from 'payload'
-import { Hero, TextContent, CallToAction, Features } from '../blocks'
+import {
+  Hero,
+  CallToAction,
+  RichContent,
+  SocialProof,
+  Features,
+  TextContent,
+} from '../blocks'
+import { textLength, isValidSlug } from '../utils/validators'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -37,8 +45,9 @@ export const Pages: CollectionConfig = {
               type: 'text',
               required: true,
               admin: {
-                description: 'The page title - displayed in browser tab and as the main heading',
+                description: 'Page title (20-100 chars) - displayed in browser tab and as the main heading',
               },
+              validate: textLength(20, 100),
             },
             {
               name: 'slug',
@@ -70,7 +79,7 @@ export const Pages: CollectionConfig = {
               type: 'blocks',
               required: true,
               minRows: 1,
-              blocks: [Hero, TextContent, CallToAction, Features],
+              blocks: [Hero, RichContent, CallToAction, SocialProof, Features, TextContent],
               admin: {
                 description: 'Build your page by adding content blocks',
               },
@@ -89,28 +98,18 @@ export const Pages: CollectionConfig = {
                   type: 'text',
                   admin: {
                     description:
-                      'SEO title - if empty, page title will be used. Recommended: 50-60 characters',
+                      'SEO title (50-60 chars) - if empty, page title will be used',
                   },
-                  validate: (value: string | null | undefined) => {
-                    if (value && value.length > 60) {
-                      return 'SEO title should be 60 characters or less for best results'
-                    }
-                    return true
-                  },
+                  validate: textLength(50, 60),
                 },
                 {
                   name: 'description',
                   type: 'textarea',
                   admin: {
                     description:
-                      'Meta description for search engines. Recommended: 150-160 characters',
+                      'Meta description for search engines (150-160 chars)',
                   },
-                  validate: (value: string | null | undefined) => {
-                    if (value && value.length > 160) {
-                      return 'Meta description should be 160 characters or less for best results'
-                    }
-                    return true
-                  },
+                  validate: textLength(150, 160),
                 },
                 {
                   name: 'image',
