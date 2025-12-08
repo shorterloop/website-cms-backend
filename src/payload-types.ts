@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -157,6 +159,207 @@ export interface Media {
   height?: number | null;
 }
 /**
+ * Create and manage website pages with flexible block-based layouts
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * The page title - displayed in browser tab and as the main heading
+   */
+  title: string;
+  /**
+   * URL-friendly identifier (e.g., "about-us" creates /about-us)
+   */
+  slug: string;
+  /**
+   * Build your page by adding content blocks
+   */
+  layout: (
+    | {
+        /**
+         * The main headline for this section
+         */
+        heading: string;
+        /**
+         * Supporting text that appears below the heading
+         */
+        subheading?: string | null;
+        /**
+         * Optional background image for the hero section
+         */
+        backgroundImage?: (number | null) | Media;
+        /**
+         * Add up to 2 CTA buttons
+         */
+        ctaButtons?:
+          | {
+              label: string;
+              /**
+               * URL or path (e.g., /contact or https://example.com)
+               */
+              link: string;
+              variant?: ('primary' | 'secondary' | 'outline') | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Text alignment for the hero content
+         */
+        alignment?: ('left' | 'center' | 'right') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'hero';
+      }
+    | {
+        /**
+         * Optional section heading
+         */
+        heading?: string | null;
+        /**
+         * The main content area - supports rich text formatting
+         */
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * Optional image to accompany the text
+         */
+        image?: (number | null) | Media;
+        /**
+         * Where the image appears relative to the text
+         */
+        imagePosition?: ('left' | 'right' | 'above' | 'below') | null;
+        /**
+         * Background color for this section
+         */
+        backgroundColor?: ('white' | 'light-gray' | 'brand-primary' | 'brand-secondary') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'textContent';
+      }
+    | {
+        /**
+         * Visual style of the CTA section
+         */
+        style?: ('banner' | 'card' | 'minimal') | null;
+        /**
+         * Main CTA headline (e.g., "Ready to get started?")
+         */
+        heading: string;
+        /**
+         * Supporting text for the CTA
+         */
+        description?: string | null;
+        buttons: {
+          /**
+           * Button text (e.g., "Start Free Trial")
+           */
+          label: string;
+          /**
+           * URL or path for the button
+           */
+          link: string;
+          variant?: ('primary' | 'secondary' | 'outline') | null;
+          /**
+           * Open link in a new browser tab
+           */
+          openInNewTab?: boolean | null;
+          id?: string | null;
+        }[];
+        backgroundColor?: ('brand-primary' | 'brand-secondary' | 'dark' | 'light') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'cta';
+      }
+    | {
+        /**
+         * Section heading (e.g., "Why choose us?")
+         */
+        heading?: string | null;
+        /**
+         * Optional intro text below the heading
+         */
+        subheading?: string | null;
+        /**
+         * Number of features per row on desktop
+         */
+        columns?: ('2' | '3' | '4') | null;
+        /**
+         * Add feature items to display in the grid
+         */
+        features: {
+          /**
+           * Icon name (e.g., "check", "star", "shield") - we'll map these to actual icons
+           */
+          icon?: string | null;
+          /**
+           * Or use a custom image instead of an icon
+           */
+          image?: (number | null) | Media;
+          title: string;
+          description: string;
+          /**
+           * Optional link for "Learn more"
+           */
+          link?: string | null;
+          id?: string | null;
+        }[];
+        backgroundColor?: ('white' | 'light-gray' | 'brand-light') | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'features';
+      }
+  )[];
+  meta?: {
+    /**
+     * SEO title - if empty, page title will be used. Recommended: 50-60 characters
+     */
+    title?: string | null;
+    /**
+     * Meta description for search engines. Recommended: 150-160 characters
+     */
+    description?: string | null;
+    /**
+     * Image for social media sharing (Open Graph / Twitter Card)
+     */
+    image?: (number | null) | Media;
+    /**
+     * Hide this page from search engines
+     */
+    noIndex?: boolean | null;
+  };
+  /**
+   * Page visibility status
+   */
+  status?: ('draft' | 'published' | 'archived') | null;
+  /**
+   * When this page should go live
+   */
+  publishedAt?: string | null;
+  /**
+   * Page layout template
+   */
+  template?: ('default' | 'full-width' | 'sidebar' | 'landing') | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -187,6 +390,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -267,6 +474,100 @@ export interface MediaSelect<T extends boolean = true> {
   filesize?: T;
   width?: T;
   height?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  layout?:
+    | T
+    | {
+        hero?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              backgroundImage?: T;
+              ctaButtons?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                    variant?: T;
+                    id?: T;
+                  };
+              alignment?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textContent?:
+          | T
+          | {
+              heading?: T;
+              content?: T;
+              image?: T;
+              imagePosition?: T;
+              backgroundColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        cta?:
+          | T
+          | {
+              style?: T;
+              heading?: T;
+              description?: T;
+              buttons?:
+                | T
+                | {
+                    label?: T;
+                    link?: T;
+                    variant?: T;
+                    openInNewTab?: T;
+                    id?: T;
+                  };
+              backgroundColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+        features?:
+          | T
+          | {
+              heading?: T;
+              subheading?: T;
+              columns?: T;
+              features?:
+                | T
+                | {
+                    icon?: T;
+                    image?: T;
+                    title?: T;
+                    description?: T;
+                    link?: T;
+                    id?: T;
+                  };
+              backgroundColor?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        noIndex?: T;
+      };
+  status?: T;
+  publishedAt?: T;
+  template?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
