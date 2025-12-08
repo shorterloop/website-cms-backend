@@ -91,7 +91,7 @@ export const Pages: CollectionConfig = {
                     description:
                       'SEO title - if empty, page title will be used. Recommended: 50-60 characters',
                   },
-                  validate: (value) => {
+                  validate: (value: string | null | undefined) => {
                     if (value && value.length > 60) {
                       return 'SEO title should be 60 characters or less for best results'
                     }
@@ -105,7 +105,7 @@ export const Pages: CollectionConfig = {
                     description:
                       'Meta description for search engines. Recommended: 150-160 characters',
                   },
-                  validate: (value) => {
+                  validate: (value: string | null | undefined) => {
                     if (value && value.length > 160) {
                       return 'Meta description should be 160 characters or less for best results'
                     }
