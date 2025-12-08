@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { textLength, isValidUrl } from '../utils/validators'
 
 export const Features: Block = {
   slug: 'features',
@@ -8,18 +9,28 @@ export const Features: Block = {
   },
   fields: [
     {
+      name: 'eyebrow',
+      type: 'text',
+      admin: {
+        description: 'Small text above heading (5-30 chars). e.g., "Why Choose Us"',
+      },
+      validate: textLength(5, 30),
+    },
+    {
       name: 'heading',
       type: 'text',
       admin: {
-        description: 'Section heading (e.g., "Why choose us?")',
+        description: 'Section heading (15-60 chars). e.g., "Everything You Need, Nothing You Don\'t"',
       },
+      validate: textLength(15, 60),
     },
     {
       name: 'subheading',
       type: 'textarea',
       admin: {
-        description: 'Optional intro text below the heading',
+        description: 'Intro text below heading (30-120 chars)',
       },
+      validate: textLength(30, 120),
     },
     {
       name: 'columns',
@@ -38,17 +49,31 @@ export const Features: Block = {
       name: 'features',
       type: 'array',
       required: true,
-      minRows: 1,
+      minRows: 2,
       maxRows: 12,
       admin: {
-        description: 'Add feature items to display in the grid',
+        description: 'Feature items (2-12)',
       },
       fields: [
         {
           name: 'icon',
-          type: 'text',
+          type: 'select',
+          options: [
+            { label: 'Check', value: 'check' },
+            { label: 'Star', value: 'star' },
+            { label: 'Shield', value: 'shield' },
+            { label: 'Lightning', value: 'lightning' },
+            { label: 'Chart', value: 'chart' },
+            { label: 'Users', value: 'users' },
+            { label: 'Target', value: 'target' },
+            { label: 'Puzzle', value: 'puzzle' },
+            { label: 'Layers', value: 'layers' },
+            { label: 'Compass', value: 'compass' },
+            { label: 'Inbox', value: 'inbox' },
+            { label: 'Signal', value: 'signal' },
+          ],
           admin: {
-            description: 'Icon name (e.g., "check", "star", "shield") - we\'ll map these to actual icons',
+            description: 'Icon from approved set',
           },
         },
         {
@@ -56,37 +81,66 @@ export const Features: Block = {
           type: 'upload',
           relationTo: 'media',
           admin: {
-            description: 'Or use a custom image instead of an icon',
+            description: 'Custom image instead of icon (optional)',
           },
         },
         {
           name: 'title',
           type: 'text',
           required: true,
+          admin: {
+            description: 'Feature title (10-50 chars)',
+          },
+          validate: textLength(10, 50),
+        },
+        {
+          name: 'tagline',
+          type: 'text',
+          admin: {
+            description: 'One-line value prop (15-60 chars). e.g., "Turn noise into signal"',
+          },
+          validate: textLength(15, 60),
         },
         {
           name: 'description',
           type: 'textarea',
           required: true,
+          admin: {
+            description: 'Feature description (40-150 chars)',
+          },
+          validate: textLength(40, 150),
         },
         {
           name: 'link',
           type: 'text',
           admin: {
-            description: 'Optional link for "Learn more"',
+            description: 'Optional "Learn more" link URL',
           },
+          validate: isValidUrl,
+        },
+        {
+          name: 'linkText',
+          type: 'text',
+          admin: {
+            description: 'Link text (10-25 chars). e.g., "Explore →"',
+            condition: (data, siblingData) => Boolean(siblingData?.link),
+          },
+          validate: textLength(10, 25),
         },
       ],
     },
     {
       name: 'backgroundColor',
       type: 'select',
-      defaultValue: 'white',
+      defaultValue: 'default',
       options: [
-        { label: 'White', value: 'white' },
+        { label: 'Default (Page)', value: 'default' },
         { label: 'Light Gray', value: 'light-gray' },
         { label: 'Brand Light', value: 'brand-light' },
       ],
+      admin: {
+        description: 'Section background color',
+      },
     },
   ],
 }
